@@ -1,0 +1,22 @@
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  // relações de mensagem (exemplo de nomes; os seus podem variar)
+  sentMessages     Message[] @relation("FromMessages")
+  receivedMessages Message[] @relation("ToMessages")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  fromUserId Int
+  toUserId   Int
+  fromUser   User @relation("FromMessages", fields: [fromUserId], references: [id])
+  toUser     User @relation("ToMessages", fields: [toUserId], references: [id])
+}
