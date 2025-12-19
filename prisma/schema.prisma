@@ -1,22 +1,33 @@
-model User {
-  id           Int      @id @default(autoincrement())
-  name         String
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
+generator client {
+  provider = "prisma-client-js"
+}
 
-  // relações de mensagem (exemplo de nomes; os seus podem variar)
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL") 
+  directUrl  = env("DIRECT_URL")   
+}
+
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  passwordHash    String
+  createdAt       DateTime  @default(now())
+
   sentMessages     Message[] @relation("FromMessages")
   receivedMessages Message[] @relation("ToMessages")
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
 
   fromUserId Int
   toUserId   Int
-  fromUser   User @relation("FromMessages", fields: [fromUserId], references: [id])
-  toUser     User @relation("ToMessages", fields: [toUserId], references: [id])
+  fromUser   User     @relation("FromMessages", fields: [fromUserId], references: [id])
+  toUser     User     @relation("ToMessages", fields: [toUserId], references: [id])
 }
